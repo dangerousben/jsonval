@@ -36,7 +36,7 @@
 [\[\]\{\}:,] return (unsigned char) yytext[0];
 
 	/* Numbers */
-0|-?([1-9][0-9]*(\.[0-9]+)?|0\.[0-9]+)([Ee][+-]?[0-9]+)? return TNUMBER;
+-?(0|[1-9][0-9]*)(\.[0-9]+)?([Ee][+-]?[0-9]+)? return TNUMBER;
 
 	/* Strings */
 \"	BEGIN str;
@@ -45,6 +45,7 @@
 <str>\\[\"\\/bfnrt]
 <str>\" {BEGIN(INITIAL); return TSTRING;}
 <str>.|\n return TINVALID;
+<str><<EOF>> return TINVALID;
 
 	/* Booleans and NULL */
 (true|false) return TBOOL;
