@@ -51,11 +51,6 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	if(xml_output == 1)
-	{
-		printf("</jslint>\n");
-	}
-
 	if(xml_output) printf("</jslint>\n");
 
 	return err;
@@ -101,11 +96,6 @@ unsigned char parse_and_report(const char *filename)
 		break;
 	}
 	
-	if(xml_output == 1)
-	{
-		printf("\t</file>\n");
-	}
-
 	if(xml_output) printf("\t</file>\n");
 
 	yylex_destroy(scanner);
