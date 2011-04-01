@@ -26,34 +26,27 @@
 extern int yyparse(yyscan_t scanner);
 unsigned char parse_and_report(const char *);
 
-unsigned int xml_output = 0;
+int xml_output = 0;
 
 int main(int argc, char *argv[])
 {
 	unsigned char err = 0;
 	int c;
-	
-	while((c = getopt(argc, argv, "x")) != -1)
-	{
-		switch(c)
-		{
-			case 'x':
-				xml_output = 1;
-				break;
-			default: abort();
+
+	while((c = getopt(argc, argv, "x")) != -1) {
+		switch(c) {
+		case 'x':
+			xml_output = 1;
+			break;
 		}
 	}
 
-	if(xml_output == 1)
-	{
-		printf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-		printf("<jslint>\n");
-	}
+	if(xml_output) printf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<jslint>\n");
 
-	if((xml_output == 0 && argc == 1) || (xml_output == 1 && argc == 2)) err = parse_and_report(NULL);
+	if((argc - optind) == 0) err = parse_and_report(NULL);
 	else {
 		unsigned int i;
-		for(i = 2; i < argc; i++) {
+		for(i = optind; i < argc; i++) {
 			if(parse_and_report(argv[i])) err = 1;
 		}
 	}
@@ -62,6 +55,8 @@ int main(int argc, char *argv[])
 	{
 		printf("</jslint>\n");
 	}
+
+	if(xml_output) printf("</jslint>\n");
 
 	return err;
 }
@@ -90,23 +85,14 @@ unsigned char parse_and_report(const char *filename)
 	yyset_debug(1, scanner);
 #endif
 
-	if(xml_output == 1)
-	{
-		printf("\t<file name=\"%s\">\n", filename);
-	}
+	if(xml_output) printf("\t<file name=\"%s\">\n", filename);
 
 	switch(yyparse(scanner)) {
 	case 0:
-		if(xml_output == 0)
-		{
-			printf("%s: valid JSON\n", filename);
-		}
+		if(!xml_output) printf("%s: valid JSON\n", filename);
 		break;
 	case 1:
-		if(xml_output == 0)
-		{
-			printf("%s: parsing failed\n", filename);
-		}
+		if(!xml_output) printf("%s: parsing failed\n", filename);
 		err = 1;
 		break;
 	case 2:
@@ -120,6 +106,8 @@ unsigned char parse_and_report(const char *filename)
 		printf("\t</file>\n");
 	}
 
+	if(xml_output) printf("\t</file>\n");
+
 	yylex_destroy(scanner);
 	if(f != stdin) fclose(f);
 
@@ -128,14 +116,12 @@ unsigned char parse_and_report(const char *filename)
 
 void yyerror(yyscan_t scanner, const char *error)
 {
-	if(xml_output == 0)
-	{
+	if(xml_output) {
+		printf("\t\t<issue line=\"%d\" char=\"\" issue=\"%s\" evidence=\"\"/>\n",
+		       yyget_lineno(scanner), error);
+	} else {
 		fprintf(stderr, "%s: %s at line %d\n",
 			(char *) yyget_extra(scanner),
 			error, yyget_lineno(scanner));
-	}
-	else
-	{
-		printf("\t\t<issue line=\"%d\" char=\"\" issue=\"%s\" evidence=\"\"/>\n", yyget_lineno(scanner), error);
 	}
 }
