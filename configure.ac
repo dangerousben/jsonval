@@ -2,8 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
-AC_CONFIG_SRCDIR([json_parser.y])
+AC_INIT([jsonval], [0.0.2], [https://github.com/dangerousben/jsonval/issues])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
