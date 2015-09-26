@@ -18,10 +18,9 @@
 */
 
 %{
-#include "json_parser.tab.h"
-#include "json_scanner.yy.h"
+#include "common.h"
 
-extern void yyerror(yyscan_t, const char *);
+#include "json_parser.h"
 %}
 
 %defines
