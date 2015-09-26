@@ -20,8 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include "json_parser.tab.h"
-#include "json_scanner.yy.h"
+#include "json_parser.h"
+#include "json_scanner.h"
 
 extern int yyparse(yyscan_t scanner);
 unsigned char parse_and_report(const char *);

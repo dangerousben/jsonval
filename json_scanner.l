@@ -18,13 +18,15 @@
 */
 
 %{
-#include "json_parser.tab.h"
+#include "common.h"
+
+#include "json_parser.h"
 %}
 
 %option 8bit reentrant bison-bridge
 %option yylineno noyywrap nounput
 %option warn nodefault
-%option outfile="json_scanner.yy.c" header-file="json_scanner.yy.h"
+%option outfile="json_scanner.c" header-file="json_scanner.h"
 
 %x str
 
