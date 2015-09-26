@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include "config.h"
 #include "json_parser.h"
 #include "json_scanner.h"
 
@@ -28,13 +29,30 @@ unsigned char parse_and_report(const char *);
 
 int xml_output = 0;
 
+void usage() {
+	printf("Usage: %s [options] [/path/to/file]\n", PACKAGE);
+	printf("\t\t(if file is not specified or -, read from stdin)\n");
+	printf("\nOPTIONS:\n");
+	printf("-x\t\tOutput in jslint-esque XML\n");
+	printf("-h\t\tShow this help\n");
+	printf("-v\t\tShow version number\n");
+	exit(0);
+}
+
 int main(int argc, char *argv[])
 {
 	unsigned char err = 0;
 	int c;
 
-	while((c = getopt(argc, argv, "x")) != -1) {
+	while((c = getopt(argc, argv, "hvx")) != -1) {
 		switch(c) {
+		case 'h':
+			usage();
+			break;
+		case 'v':
+			printf("%s %s\n", PACKAGE, PACKAGE_VERSION);
+			exit(0);
+			break;
 		case 'x':
 			xml_output = 1;
 			break;
