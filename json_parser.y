@@ -26,8 +26,8 @@
 %defines
 %error-verbose
 %pure-parser
-%parse-param {yyscan_t scanner}
-%lex-param {yyscan_t scanner}
+%parse-param {void *scanner}
+%lex-param {void *scanner}
 
 %token TSTRING
 %token TNUMBER
