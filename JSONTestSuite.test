@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+# vim:ts=8:shiftwidth=8:noexpandtab
+
+use strict;
+use warnings;
+
+use Test::More;
+use FindBin;
+
+opendir(my $dh, "$FindBin::Bin/JSONTestSuite/test_parsing") or die $!;
+
+my %broken = map { $_.".json" => 1 } qw/
+	y_string_space
+	y_structure_string_empty
+	y_structure_lonely_string
+	y_structure_lonely_int
+	y_string_unescaped_char_delete
+	y_structure_lonely_null
+	y_structure_lonely_true
+	y_structure_lonely_negative_real
+	y_string_with_del_character
+	y_structure_lonely_false
+/;
+
+while (my $f = readdir($dh)) {
+	local $TODO = $broken{$f} ? "Known broken" : undef;
+	if ($f =~ /^y_/) {
+		system("$FindBin::Bin/jsonval", "$FindBin::Bin/JSONTestSuite/test_parsing/$f");
+		is($?, 0, "$f should be valid");
+	}
+	elsif ($f =~ /^n_/) {
+		system("$FindBin::Bin/jsonval", "$FindBin::Bin/JSONTestSuite/test_parsing/$f");
+		is($?, 256, "$f should be invalid (but not die with signal");
+	}
+	elsif ($f =~ /^i_/) {
+		system("$FindBin::Bin/jsonval", "$FindBin::Bin/JSONTestSuite/test_parsing/$f");
+		ok($? == 0 || $?== 256, "$f may or may not succeed, but validator should not crash");
+	}
+}
+
+opendir(my $dh, "$FindBin::Bin/JSONTestSuite/test_transform") or die $!;
+
+while (my $f = readdir($dh)) {
+	next unless $f =~ /\.json$/;
+	system("$FindBin::Bin/jsonval", "$FindBin::Bin/JSONTestSuite/test_transform/$f");
+	is($?, 0, "$f should be valid");
+}
+
+done_testing;
